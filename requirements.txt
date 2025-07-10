@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+redis
+scikit-learn
+apscheduler
+sentence-transformers
+requests 
+pdfplumber
