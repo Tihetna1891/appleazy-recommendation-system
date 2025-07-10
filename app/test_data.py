@@ -1,0 +1,122 @@
+# app/test_data.py
+from datetime import datetime
+
+users = {
+    "user1": {
+        "id": "user1",
+        "resume": None,
+        "cv": "Experienced data analyst skilled in Python, SQL, and dashboarding tools.",
+        "position": "Data Analyst",
+        "location": "New York NY",
+        "minDesiredPay": "800",
+        "maxDesiredPay": "0",
+        "jobType": "full-time",
+        "jobSetting": "remote",
+        "preferredIndustry": "Finance",
+        "ethnicity": "black-african-american",
+    },
+    "user2": {
+        "id": "user2",
+        "resume": None,
+        "cv": "Front-end engineer with strong React and UI/UX skills, interested in remote contracts.",
+        "position": "Frontend Developer",
+        "location": "Los Angeles CA",
+        "minDesiredPay": "1200",
+        "maxDesiredPay": "2000",
+        "jobType": "contract",
+        "jobSetting": "remote",
+        "preferredIndustry": "Tech",
+        "ethnicity": "asian",
+    },
+    "user3": {
+        "id": "user3",
+        "resume": None,
+        "cv": "Biomedical engineer with experience in signal processing and embedded systems.",
+        "position": "Biomedical Engineer",
+        "location": "Boston MA",
+        "minDesiredPay": "900",
+        "maxDesiredPay": "0",
+        "jobType": "full-time",
+        "jobSetting": "on-site",
+        "preferredIndustry": "Healthcare",
+        "ethnicity": "black-african-american",
+    }
+}
+
+jobs = {
+    "job1": {
+        "id": "job1",
+        "jobTitle": "Data Analyst",
+        "company": "DataCorp",
+        "location": "New York NY",
+        "minPay": 700,
+        "maxPay": 1200,
+        "jobSetting": "remote",
+        "jobType": "full-time",
+        "status": "open",
+        "source": "internal",
+        "description": "Looking for a data analyst with strong SQL and Python skills for financial data.",
+        "date": str(datetime.now()),
+        "link": "https://example.com/job1"
+    },
+    "job2": {
+        "id": "job2",
+        "jobTitle": "React Developer",
+        "company": "WebTech",
+        "location": "Remote",
+        "minPay": 1000,
+        "maxPay": 1800,
+        "jobSetting": "remote",
+        "jobType": "contract",
+        "status": "open",
+        "source": "internal",
+        "description": "Frontend React developer needed for a 3-month contract project.",
+        "date": str(datetime.now()),
+        "link": "https://example.com/job2"
+    },
+    "job3": {
+        "id": "job3",
+        "jobTitle": "Junior Embedded Engineer",
+        "company": "BioHealth",
+        "location": "Boston MA",
+        "minPay": 850,
+        "maxPay": 1100,
+        "jobSetting": "on-site",
+        "jobType": "full-time",
+        "status": "open",
+        "source": "external",
+        "description": "Support development of embedded firmware for medical devices.",
+        "date": str(datetime.now()),
+        "link": "https://example.com/job3"
+    },
+    "job4": {
+        "id": "job4",
+        "jobTitle": "Product Manager",
+        "company": "Startify",
+        "location": "San Francisco CA",
+        "minPay": 1300,
+        "maxPay": 2000,
+        "jobSetting": "hybrid",
+        "jobType": "full-time",
+        "status": "open",
+        "source": "external",
+        "description": "Lead cross-functional teams to launch MVPs quickly.",
+        "date": str(datetime.now()),
+        "link": "https://example.com/job4"
+    },
+    "job5": {
+        "id": "job5",
+        "jobTitle": "Biomedical Data Analyst",
+        "company": "MedTools",
+        "location": "Remote",
+        "minPay": 950,
+        "maxPay": 1300,
+        "jobSetting": "remote",
+        "jobType": "full-time",
+        "status": "open",
+        "source": "external",
+        "description": "Work with biosignal datasets to extract health trends using Python and MATLAB.",
+        "date": str(datetime.now()),
+        "link": "https://example.com/job5"
+    }
+}

@@ -3,7 +3,7 @@ from typing import List
 import numpy as np
 import requests
 from redis_client import get_recommendations, store_recommendations
-from vector_score import calculate_similarity
+from vector_calculate import calculate_similarity
 from scheduler import start_scheduler
 
 app = FastAPI()
