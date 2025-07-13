@@ -75,27 +75,19 @@ def recommendations(
 # ────────────────────────────────
 # Internal: paginate + hydrate
 # ────────────────────────────────
-def _paged_response(
-    ranked_pairs: List[list],  # list of [job_id, score]
-    page: int,
-    size: int,
-):
-    print(f"📄 Paginating results → Page {page}, Size {size}")
-
-    hydrated: List[dict] = []
+def _paged_response(ranked_pairs: List[list], page: int, size: int):
+    hydrated = []
     for pair in ranked_pairs:
-        if isinstance(pair, list) and len(pair) == 2:
-            job_id, score = pair
+        if isinstance(pair, str):
+            job_id = pair
+            score = None
         else:
-            job_id, score = pair, None
+            job_id, score = pair
 
         job = get_job_by_id(job_id)
         if job:
             job["score"] = score
-            print(f"✅ Fetched {job_id} from Redis (score: {score:.4f})")
             hydrated.append(job)
-        else:
-            print(f"⚠️ Job ID {job_id} not found in Redis.")
 
     start = (page - 1) * size
     end = start + size
