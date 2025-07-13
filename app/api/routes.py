@@ -1,0 +1,24 @@
+# api/routes.py
+from fastapi import APIRouter, HTTPException, Query
+from services.recommender import get_user_recommendations, get_all_recommendations
+import traceback
+
+router = APIRouter()
+
+@router.get("/recommendations/{user_id}")
+def recommendations(user_id: str, page: int = Query(1, gt=0), size: int = Query(20, gt=0)):
+    try:
+        return get_user_recommendations(user_id, page, size)
+    except HTTPException as e:
+        raise e
+    except Exception:
+        raise HTTPException(500, "Internal server error")
+
+@router.get("/recommendations")
+def recommendations_for_all():
+    try:
+        return get_all_recommendations()
+    except Exception as e:
+        print("❌ Error in all recommendations:", e)
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Internal server error")

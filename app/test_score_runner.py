@@ -1,9 +1,9 @@
 from time import perf_counter
 
 from test_data import users, jobs
-from embedder import embed_user, embed_jobs
-from vector_calculate import build_job_matrix, rank_jobs_for_user
-from redis_client import (
+from services.embedder import embed_user, embed_jobs
+from services.vector_calculate import build_job_matrix, rank_jobs_for_user
+from services.redis_client import (
     store_recommendations,
     store_user_vector,
     store_jobs,
