@@ -3,6 +3,7 @@ uvicorn
 redis
 scikit-learn
 apscheduler
-sentence-transformers
 requests 
 pdfplumber
+openai
+python-dotenv

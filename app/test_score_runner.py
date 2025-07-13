@@ -1,28 +1,54 @@
+from time import perf_counter
+
 from test_data import users, jobs
-from embedder import embed_user, embed
-from vector_calculate import calculate_similarity
+from embedder import embed_user, embed_jobs
+from vector_calculate import build_job_matrix, rank_jobs_for_user
+from redis_client import (
+    store_recommendations,
+    store_user_vector,
+    store_jobs,
+)
+
+import numpy as np
+
 
 def run_manual_scoring():
-    print("🔍 Running manual vector scoring...\n")
+    print("⚡ Running fast job-user scoring with Redis store …\n")
 
-    # Convert job descriptions to vectors
-    job_ids = list(jobs.keys())
-    job_vectors = [embed(jobs[job_id]["description"]) for job_id in job_ids]
+    # -------- BATCH-EMBED + NORMALIZE THE JOBS  -----------------
+    job_ids  = list(jobs.keys())
+    job_list = [jobs[jid] for jid in job_ids]
+    
+    t0 = perf_counter()
+    job_vecs = embed_jobs(job_list)
+    job_matrix = build_job_matrix(job_vecs)
+    print(f"✅ Embedded and normalized {len(job_vecs)} jobs in {perf_counter()-t0:.2f}s\n")
 
+    # -------- SCORE PER USER + STORE IN REDIS -------------------
     for user_id, user_data in users.items():
-        user_vector = embed_user(user_data)
+        if not user_data:
+            print(f"⚠️ Skipping empty user: {user_id}")
+            continue
 
-        # Calculate cosine similarity
-        scored = calculate_similarity(user_vector, job_vectors)  # List of (job_index, score)
+        try:
+            user_vec = np.array(embed_user(user_data))
+        except Exception as e:
+            print(f"❌ Failed to embed user {user_id}: {e}")
+            continue
+
+        scored = rank_jobs_for_user(user_vec, job_matrix)
         sorted_results = [(job_ids[i], score) for i, score in scored]
 
-        print(f"\n👤 User: {user_id}")
-        print("Top Job Matches:")
-        for rank, (job_id, score) in enumerate(sorted_results[:5], 1):
-            job = jobs[job_id]
-            print(f"  {rank}. {job['jobTitle']} at {job['company']} ({job['location']})")
-            print(f"     → Similarity Score: {score:.4f}")
-        print("-" * 50)
+        store_recommendations(user_id, sorted_results)
+
+        print(f"👤  User: {user_id} — All Job Matches (sorted):")
+        for rank, (job_id, score) in enumerate(sorted_results, 1):
+            j = jobs[job_id]
+            print(f"  {rank}. {j['jobTitle']} at {j['company']} "
+                  f"({j['location']})  →  {score:.4f}")
+        print("=" * 60)
+
+
 
 if __name__ == "__main__":
     run_manual_scoring()

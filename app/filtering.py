@@ -2,32 +2,40 @@ from typing import List
 
 def filter_jobs(user: dict, jobs: List[dict]) -> List[dict]:
     """
-    Apply filters to the job list based on the user's preferences.
-    Filters are NOT applied yet — this is the ready-to-use structure.
-
-    Expected job schema:
-    - location, jobType, jobSetting, minPay, maxPay, status
+    Filters jobs based on the user's preferences:
+    ✓ location (comma-separated string)
+    ✓ min desired pay (int)
+    ✓ job type (comma-separated: e.g., "full-time,contract")
+    ✓ job setting (comma-separated: e.g., "remote,onsite")
+    ✓ job status must be 'open'
     """
+    user_locations = [loc.strip().lower() for loc in user.get("location", "").split(",") if loc.strip()]
+    min_pay = int(user.get("minDesiredPay", 0))
 
-    # Future Example Filters (currently commented out):
-    # 1. Location Match
-    # user_locations = [loc.strip() for loc in user.get("location", "").split(",")]
-    # jobs = [job for job in jobs if job["location"] in user_locations]
+    preferred_types = [t.strip().lower() for t in user.get("jobType", "").split(",") if t.strip()]
+    preferred_settings = [s.strip().lower() for s in user.get("jobSetting", "").split(",") if s.strip()]
 
-    # 2. Pay Range Overlap
-    # min_pay = int(user.get("minDesiredPay", 0))
-    # jobs = [job for job in jobs if job["maxPay"] >= min_pay]
+    filtered = []
+    for job in jobs:
+        if job.get("status", "").lower() != "open":
+            continue
 
-    # 3. Job Type / Setting
-    # preferred_type = user.get("jobType")
-    # preferred_setting = user.get("jobSetting")
-    # jobs = [
-    #     job for job in jobs
-    #     if (not preferred_type or job["jobType"] == preferred_type) and
-    #        (not preferred_setting or job["jobSetting"] == preferred_setting)
-    # ]
+        job_location = job.get("location", "").strip().lower()
+        if user_locations and job_location not in user_locations:
+            continue
 
-    # 4. Only Open Jobs
-    # jobs = [job for job in jobs if job["status"].lower() == "open"]
+        job_max_pay = job.get("maxPay", 0)
+        if job_max_pay < min_pay:
+            continue
 
-    return jobs  # currently no filters applied
+        job_type = job.get("jobType", "").strip().lower()
+        if preferred_types and job_type not in preferred_types:
+            continue
+
+        job_setting = job.get("jobSetting", "").strip().lower()
+        if preferred_settings and job_setting not in preferred_settings:
+            continue
+
+        filtered.append(job)
+
+    return filtered

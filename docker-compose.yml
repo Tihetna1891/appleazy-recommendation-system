@@ -9,6 +9,8 @@ services:
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    env_file:
+      - .env   # ✅ This line loads your OPENAI_API_KEY
 
   redis:
     image: redis:alpine

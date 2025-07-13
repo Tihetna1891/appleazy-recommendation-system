@@ -1,5 +1,6 @@
-# app/test_data.py
 from datetime import datetime
+
+# --- USERS ---
 
 users = {
     "user1": {
@@ -40,8 +41,49 @@ users = {
         "jobSetting": "on-site",
         "preferredIndustry": "Healthcare",
         "ethnicity": "black-african-american",
-    }
+    },
+    "user4": {
+        "id": "user4",
+        "resume": None,
+        "cv": "Cybersecurity analyst with SOC experience and strong knowledge of NIST framework.",
+        "position": "Cybersecurity Analyst",
+        "location": "Washington DC",
+        "minDesiredPay": "950",
+        "maxDesiredPay": "1500",
+        "jobType": "full-time",
+        "jobSetting": "hybrid",
+        "preferredIndustry": "IT",
+        "ethnicity": "black-african-american",
+    },
+    "user5": {
+        "id": "user5",
+        "resume": None,
+        "cv": "Accountant with experience in financial reporting, auditing, and QuickBooks.",
+        "position": "Accountant",
+        "location": "Chicago IL",
+        "minDesiredPay": "500",
+        "maxDesiredPay": "1000",
+        "jobType": "part-time",
+        "jobSetting": "on-site",
+        "preferredIndustry": "Accounting",
+        "ethnicity": "latino",
+    },
+    "user6": {
+        "id": "user6",
+        "resume": None,
+        "cv": "Machine learning engineer skilled in TensorFlow, PyTorch, and data pipelines.",
+        "position": "ML Engineer",
+        "location": "San Francisco CA",
+        "minDesiredPay": "2000",
+        "maxDesiredPay": "4000",
+        "jobType": "full-time",
+        "jobSetting": "remote",
+        "preferredIndustry": "Tech",
+        "ethnicity": "asian",
+    },
 }
+
+# --- JOBS ---
 
 jobs = {
     "job1": {
@@ -118,5 +160,80 @@ jobs = {
         "description": "Work with biosignal datasets to extract health trends using Python and MATLAB.",
         "date": str(datetime.now()),
         "link": "https://example.com/job5"
+    },
+    "job6": {
+        "id": "job6",
+        "jobTitle": "SOC Analyst",
+        "company": "SecureOps",
+        "location": "Washington DC",
+        "minPay": 900,
+        "maxPay": 1400,
+        "jobSetting": "hybrid",
+        "jobType": "full-time",
+        "status": "open",
+        "source": "internal",
+        "description": "Looking for a SOC analyst familiar with SIEM tools and incident response.",
+        "date": str(datetime.now()),
+        "link": "https://example.com/job6"
+    },
+    "job7": {
+        "id": "job7",
+        "jobTitle": "Bookkeeper",
+        "company": "TaxSavvy",
+        "location": "Chicago IL",
+        "minPay": 400,
+        "maxPay": 800,
+        "jobSetting": "on-site",
+        "jobType": "part-time",
+        "status": "open",
+        "source": "external",
+        "description": "Bookkeeper needed for a small tax accounting firm using QuickBooks.",
+        "date": str(datetime.now()),
+        "link": "https://example.com/job7"
+    },
+    "job8": {
+        "id": "job8",
+        "jobTitle": "ML Research Engineer",
+        "company": "AI Lab",
+        "location": "San Francisco CA",
+        "minPay": 2500,
+        "maxPay": 4500,
+        "jobSetting": "remote",
+        "jobType": "full-time",
+        "status": "open",
+        "source": "internal",
+        "description": "Machine learning researcher with experience in LLMs, PyTorch, and vector databases.",
+        "date": str(datetime.now()),
+        "link": "https://example.com/job8"
+    },
+    "job9": {
+        "id": "job9",
+        "jobTitle": "Financial Analyst",
+        "company": "BankPro",
+        "location": "New York NY",
+        "minPay": 1200,
+        "maxPay": 1800,
+        "jobSetting": "on-site",
+        "jobType": "full-time",
+        "status": "open",
+        "source": "external",
+        "description": "Assist in financial modeling and budget analysis for a mid-size investment bank.",
+        "date": str(datetime.now()),
+        "link": "https://example.com/job9"
+    },
+    "job10": {
+        "id": "job10",
+        "jobTitle": "Operations Manager",
+        "company": "Logix",
+        "location": "Los Angeles CA",
+        "minPay": 1100,
+        "maxPay": 1600,
+        "jobSetting": "on-site",
+        "jobType": "full-time",
+        "status": "open",
+        "source": "external",
+        "description": "Oversee day-to-day logistics operations, warehouse staff, and reporting.",
+        "date": str(datetime.now()),
+        "link": "https://example.com/job10"
     }
 }
