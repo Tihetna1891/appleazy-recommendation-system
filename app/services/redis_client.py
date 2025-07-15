@@ -163,3 +163,22 @@ def get_job_by_id(job_id: str) -> dict | None:
         "date": decode("date"),
         "metadata": {}
     }
+
+def get_all_jobs() -> list[dict]:
+    keys = redis_client.keys("job:*")
+    jobs = []
+    for key in keys:
+        job_id = key.decode().split(":")[1]
+        job = get_job_by_id(job_id)
+        if job:
+            jobs.append({
+                **job,
+                "vector": get_job_vector_raw(job_id)  # you might need this helper
+            })
+    return jobs
+
+def get_job_vector_raw(job_id: str) -> list[float]:
+    raw = redis_client.hget(f"job:{job_id}", "vector")
+    if raw is None:
+        return []
+    return list(struct.unpack(f"{len(raw)//4}f", raw))

@@ -2,13 +2,15 @@
 from fastapi import HTTPException
 import numpy as np
 from typing import List
+import requests
+import json
 
 from services.redis_client import (
     redis_client,
     get_recommendations,
     store_recommendations,
     get_job_by_id,
-    store_jobs,
+    store_jobs, store_user_vector, get_all_jobs
 )
 from services.vector_calculate import build_job_matrix, rank_jobs_for_user
 from services.embedder import embed_user, embed_jobs
@@ -16,11 +18,11 @@ from services.fetcher import fetch_user, fetch_jobs_open
 
 
 def get_user_recommendations(user_id: str, page: int, size: int):
-    print(f"🔎 Getting recommendations for user: {user_id}")
+    print(f" Getting recommendations for user: {user_id}")
 
     cached = get_recommendations(user_id)
     if cached:
-        print(f"⚡️ Cache hit for user {user_id}. Returning {len(cached)} cached job IDs.")
+        print(f" Cache hit for user {user_id}. Returning {len(cached)} cached job IDs.")
         return _paged_response(cached, page, size)
 
     user = fetch_user(user_id)
@@ -98,3 +100,30 @@ def get_all_recommendations():
         })
 
     return result
+
+def generate_recommendation_for_user(user_id: str):
+    #  1. Fetch the user
+    user_resp = requests.get(f"https://sandbox.appleazy.com/api/v1/user/get-profile/{user_id}")
+    if user_resp.status_code != 200:
+        raise ValueError(f"User {user_id} not found")
+
+    user_data = user_resp.json()
+    user_vector = embed_user(user_data)
+    store_user_vector(user_id, user_vector)
+
+    #  2. Load existing jobs from Redis
+    jobs = get_all_jobs()  # make sure you have a function for this
+    if not jobs:
+        raise ValueError("No jobs in the system")
+
+    job_ids = [job["id"] for job in jobs]
+    job_vectors = [job["vector"] for job in jobs]
+    job_matrix = build_job_matrix(job_vectors)
+
+    #  3. Rank
+    scored = rank_jobs_for_user(np.array(user_vector, dtype=np.float32), job_matrix)
+    ranked_pairs = [[job_ids[i], float(score)] for i, score in scored]
+
+    #  4. Store recommendations
+    store_recommendations(user_id, ranked_pairs)
+    print(f"✅ Recommendations created for user {user_id}")

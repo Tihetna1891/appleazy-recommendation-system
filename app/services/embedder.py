@@ -46,7 +46,7 @@ def _embed_batch(batch: List[str]) -> List[List[float]]:
     Embed one batch; raise on any API error.
     Returns list[list[float]] (same order as input).
     """
-    response = openai.Embeddings.create(model=EMBED_MODEL, input=batch)
+    response = openai.embeddings.create(model=EMBED_MODEL, input=batch)
     return [item.embedding for item in response.data]
 
 
