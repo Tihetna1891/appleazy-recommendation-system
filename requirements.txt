@@ -7,3 +7,6 @@ requests
 pdfplumber
 openai
 python-dotenv
+pytest 
+httpx 
+pytest-asyncio

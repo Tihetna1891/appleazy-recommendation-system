@@ -1,10 +1,10 @@
 # services/scheduler.py
 
 from apscheduler.schedulers.background import BackgroundScheduler
-from services.fetcher import fetch_all_users, fetch_jobs_open
-from services.redis_client import get_user_vector, store_jobs, store_recommendations, get_all_jobs, get_all_users
-from services.embedder import embed_jobs
-from services.vector_calculate import build_job_matrix, rank_jobs_for_user
+from app.services.fetcher import fetch_all_users, fetch_jobs_open
+from app.services.redis_client import get_user_vector, store_jobs, store_recommendations, get_all_jobs, get_all_users
+from app.services.embedder import embed_jobs
+from app.services.vector_calculate import build_job_matrix, rank_jobs_for_user
 import numpy as np
 
 def run_daily_recalculation():

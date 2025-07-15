@@ -5,16 +5,16 @@ from typing import List
 import requests
 import json
 
-from services.redis_client import (
+from app.services.redis_client import (
     redis_client,
     get_recommendations,
     store_recommendations,
     get_job_by_id,
     store_jobs, store_user_vector, get_all_jobs
 )
-from services.vector_calculate import build_job_matrix, rank_jobs_for_user
-from services.embedder import embed_user, embed_jobs
-from services.fetcher import fetch_user, fetch_jobs_open
+from app.services.vector_calculate import build_job_matrix, rank_jobs_for_user
+from app.services.embedder import embed_user, embed_jobs
+from app.services.fetcher import fetch_user, fetch_jobs_open
 
 
 def get_user_recommendations(user_id: str, page: int, size: int):

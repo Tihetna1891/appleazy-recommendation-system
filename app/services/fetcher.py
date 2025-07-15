@@ -1,7 +1,7 @@
 # app/services/fetcher.py
 
 import requests
-from config import settings
+from app.config import settings
 
 
 def fetch_user(user_id: str) -> dict | None:

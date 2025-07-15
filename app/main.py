@@ -1,7 +1,7 @@
 # main.py
 from fastapi import FastAPI
-from api.routes import router as api_router
-from services.scheduler import start_scheduler
+from app.api.routes import router as api_router
+from app.services.scheduler import start_scheduler
 
 app = FastAPI(title="Job Recommender")
 

@@ -6,7 +6,7 @@ import tempfile
 import pdfplumber
 import requests
 from dotenv import load_dotenv
-from config import settings
+from app.config import settings
 
 # ------------------------------------------------------------------ #
 #  Configuration

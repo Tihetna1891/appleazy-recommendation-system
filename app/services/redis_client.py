@@ -14,7 +14,7 @@ from datetime import timedelta
 import redis
 from redis.commands.search.field import VectorField, TextField
 
-from config import settings
+from app.config import settings
 
 # --------------------------------------------------------------------------- #
 #  Connection

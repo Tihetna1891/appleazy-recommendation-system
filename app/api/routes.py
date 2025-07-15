@@ -1,6 +1,6 @@
 # api/routes.py
 from fastapi import APIRouter, HTTPException, Query
-from services.recommender import get_user_recommendations, get_all_recommendations, generate_recommendation_for_user
+from app.services.recommender import get_user_recommendations, get_all_recommendations, generate_recommendation_for_user
 import traceback
 
 router = APIRouter()
