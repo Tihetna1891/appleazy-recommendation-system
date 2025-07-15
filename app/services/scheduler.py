@@ -49,5 +49,5 @@ def run_daily_recalculation():
 
 def start_scheduler():
     scheduler = BackgroundScheduler(timezone="Africa/Addis_Ababa")
-    scheduler.add_job(run_daily_recalculation, trigger='cron', hour=0, minute=0, id="daily_job_user_update")
+    scheduler.add_job(run_daily_recalculation, trigger='cron', hour=22, minute=0, id="daily_job_user_update")
     scheduler.start()

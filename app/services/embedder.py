@@ -1,35 +1,26 @@
-# app/services/embedder.py
-"""
-Embedding helpers (OpenAI)
-
-• Centralises all model / batch / truncation settings via app.config
-• Raises RuntimeError on any embedding failure (no silent empty lists)
-• Supports single-string or list-of-strings input
-"""
-
 from __future__ import annotations
-
 import os
 from typing import Iterable, List
-
 import openai
+import tempfile
+import pdfplumber
+import requests
 from dotenv import load_dotenv
-
 from config import settings
 
 # ------------------------------------------------------------------ #
 #  Configuration
 # ------------------------------------------------------------------ #
 
-load_dotenv()  # pull OPENAI_API_KEY from .env if present
+load_dotenv()  
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 if not openai.api_key:
     raise RuntimeError("OPENAI_API_KEY not found in environment or .env")
 
-EMBED_MODEL      = settings.EMBED_MODEL          # e.g. "text-embedding-3-small"
-MAX_BATCH_SIZE   = settings.EMBED_BATCH_SIZE     # e.g. 96
-MAX_CHARS        = settings.EMBED_MAX_CHARS      # e.g. 6000
+EMBED_MODEL      = settings.EMBED_MODEL          
+MAX_BATCH_SIZE   = settings.EMBED_BATCH_SIZE     
+MAX_CHARS        = settings.EMBED_MAX_CHARS      
 
 # ------------------------------------------------------------------ #
 #  Low-level helpers
@@ -61,8 +52,40 @@ def _embed_raw(texts: List[str]) -> List[List[float]]:
             raise RuntimeError(f"[embedder] OpenAI embedding failed → {exc}") from exc
     return all_vectors
 
+def _download_pdf(url: str) -> str | None:
+    """Download a remote PDF → return temp‑file path or None on failure."""
+    try:
+        r = requests.get(url, timeout=15)
+        r.raise_for_status()
+    except Exception as exc:
+        print(f"[embedder] PDF download failed: {exc}")
+        return None
+
+    fd, path = tempfile.mkstemp(suffix=".pdf")
+    with os.fdopen(fd, "wb") as fh:
+        fh.write(r.content)
+    return path
+
+def extract_text_from_pdf(url: str) -> str:
+    """Return concatenated text of all pages or empty string on failure."""
+    pdf_path = _download_pdf(url)
+    if not pdf_path:
+        return ""
+
+    full_text: List[str] = []
+    try:
+        with pdfplumber.open(pdf_path) as pdf:
+            for page in pdf.pages:
+                full_text.append(page.extract_text() or "")
+    except Exception as exc:
+        print(f"[embedder] PDF parsing failed: {exc}")
+    finally:
+        os.remove(pdf_path)
+
+    return "\n".join(full_text).strip()
+
 # ------------------------------------------------------------------ #
-#  Public API
+#  Main Function
 # ------------------------------------------------------------------ #
 
 def embed(texts: str | List[str]) -> List[float] | List[List[float]]:
@@ -84,27 +107,29 @@ def embed(texts: str | List[str]) -> List[float] | List[List[float]]:
 # ------------------------------------------------------------------ #
 
 def embed_user(user: dict) -> List[float]:
-    """Combine résumé/CV text (if any) and embed into one vector."""
-    resume_text = (user.get("resume") or "").strip()
-    cv_text     = (user.get("cv") or "").strip()
+    resume_field = (user.get("resume") or "").strip()
+    cv_field = (user.get("cv") or "").strip()
 
-    if resume_text and cv_text:
-        combined = f"{cv_text}\n\n{resume_text}"
-    elif cv_text:
-        combined = cv_text
-    elif resume_text:
-        combined = resume_text
-    else:
-        combined = ", ".join(
-            [
-                user.get("position", ""),
-                user.get("preferredIndustry", ""),
-                user.get("ethnicity", ""),
-                user.get("location", ""),
-            ]
-        ).strip() or "empty profile"
+    content = ""
 
-    return embed(combined)  # type: ignore[return-value]
+    if resume_field:
+        if resume_field.lower().endswith(".pdf"):
+            content = extract_text_from_pdf(resume_field).strip()
+        else:
+            content = resume_field
+    elif cv_field:
+        content = cv_field
+
+    if not content:
+        content = ", ".join([
+            user.get("position", ""),
+            user.get("preferredIndustry", ""),
+            user.get("ethnicity", ""),
+            user.get("location", ""),
+        ]).strip() or "empty profile"
+
+    return embed(content)  
+
 
 
 def embed_jobs(job_list: List[dict]) -> List[List[float]]:
