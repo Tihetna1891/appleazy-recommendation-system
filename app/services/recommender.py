@@ -25,10 +25,22 @@ def get_user_recommendations(user_id: str, page: int, size: int):
         print(f" Cache hit for user {user_id}. Returning {len(cached)} cached job IDs.")
         return _paged_response(cached, page, size)
 
+    # Fetch user
     user = fetch_user(user_id)
     if not user:
-        raise HTTPException(404, "User not found")
+        print(f" User {user_id} not found in main DB. Trying fallback to generate recommendation.")
+        try:
+            generate_recommendation_for_user(user_id)
+            cached = get_recommendations(user_id)
+            if cached:
+                return _paged_response(cached, page, size)
+            else:
+                raise HTTPException(500, f"Failed to generate recommendations for {user_id}")
+        except Exception as e:
+            print(f" Failed to generate recommendation: {e}")
+            raise HTTPException(404, f"User {user_id} not found and could not generate recommendation")
 
+    # If user exists but no cached recs (first-time call)
     user_vec = np.asarray(embed_user(user), dtype=np.float32)
 
     jobs_open = fetch_jobs_open()
@@ -45,6 +57,7 @@ def get_user_recommendations(user_id: str, page: int, size: int):
 
     store_recommendations(user_id, ranked_ids)
     return _paged_response(ranked_ids, page, size)
+
 
 def get_all_recommendations():
     pattern = "recommendations:*"
@@ -126,4 +139,4 @@ def generate_recommendation_for_user(user_id: str):
 
     #  4. Store recommendations
     store_recommendations(user_id, ranked_pairs)
-    print(f"✅ Recommendations created for user {user_id}")
+    print(f" Recommendations created for user {user_id}")

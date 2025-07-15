@@ -2,17 +2,22 @@
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from services.fetcher import fetch_all_users, fetch_jobs_open
-from services.redis_client import get_user_vector, store_jobs, store_recommendations
+from services.redis_client import get_user_vector, store_jobs, store_recommendations, get_all_jobs, get_all_users
 from services.embedder import embed_jobs
 from services.vector_calculate import build_job_matrix, rank_jobs_for_user
 import numpy as np
 
 def run_daily_recalculation():
-    print("⏰ [Scheduler] Running daily job-user similarity update...")
+    print(" [Scheduler] Running daily job-user similarity update...")
 
     jobs = fetch_jobs_open()
+
     if not jobs:
-        print("⚠️ No jobs fetched.")
+        print(" No new jobs fetched from API. Using existing jobs in Redis.")
+        jobs = get_all_jobs()
+
+    if not jobs:
+        print(" No jobs available in Redis. Aborting.")
         return
 
     job_ids = [j["id"] for j in jobs]
@@ -22,8 +27,8 @@ def run_daily_recalculation():
 
     users = fetch_all_users()
     if not users:
-        print("⚠️ No users fetched.")
-        return
+        print(" No users fetched from api.")
+        users = get_all_users()
 
     for user in users:
         user_id = user.get("id")
@@ -32,14 +37,14 @@ def run_daily_recalculation():
 
         user_vec = get_user_vector(user_id)
         if user_vec is None:
-            print(f"⛔️ User vector missing for {user_id}, skipping.")
+            print(f" User vector missing for {user_id}, skipping.")
             continue
 
         ranked_pairs = rank_jobs_for_user(np.array(user_vec, dtype=np.float32), job_matrix)
         # Convert job_idx to job_id in ranked pairs
         job_scores = [[job_ids[i], score] for i, score in ranked_pairs]
         store_recommendations(user_id, job_scores)
-        print(f"✅ Updated recommendations for user {user_id}")
+        print(f" Updated recommendations for user {user_id}")
 
 
 def start_scheduler():

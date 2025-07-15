@@ -177,6 +177,21 @@ def get_all_jobs() -> list[dict]:
             })
     return jobs
 
+def get_all_users() -> list[dict]:
+    """Retrieve all stored users and their vectors from Redis."""
+    keys = redis_client.keys("user:*")
+    users = []
+    for key in keys:
+        user_id = key.decode().split(":")[1]
+        vector = get_user_vector(user_id)
+        if vector:
+            users.append({
+                "id": user_id,
+                "vector": vector
+            })
+    return users
+
+
 def get_job_vector_raw(job_id: str) -> list[float]:
     raw = redis_client.hget(f"job:{job_id}", "vector")
     if raw is None:
