@@ -3,21 +3,21 @@ This repo contains the FastAPI backend for the job recommendation system. Below 
 
  Setup
 1. Clone and install dependencies
-cd job-matching
-python3.12 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+```cd job-matching ```
+```python3 -m venv .venv ```
+```source .venv/bin/activate ```
+```pip install -r requirements.txt ```
 2. Environment setup
 Create a .env file with: the env.examplle
 
 Running the App
 Option 1: Docker (preferred)
-docker-compose up --build
+```docker compose up --build ```
 Runs both Redis and the FastAPI app.
 
 Option 2: Manual
 Start Redis separately, then:
-uvicorn app.main:app --reload
+```uvicorn app.main:app --reload ```
 
 
  API Endpoints
@@ -25,6 +25,6 @@ GET /recommendations/{user_id} – fetch exising recommendations for a specific 
 
 
 Running Tests
-PYTHONPATH=. pytest -v
+```PYTHONPATH=. pytest -v ```
 Tests are in tests/. You can run a specific test file:
-pytest tests/test_recommender.py
+``` pytest tests/test_recommender.py ```
