@@ -6,6 +6,7 @@ from app.services.redis_client import get_user_vector, store_jobs, store_recomme
 from app.services.embedder import embed_jobs
 from app.services.vector_calculate import build_job_matrix, rank_jobs_for_user
 import numpy as np
+import logging
 
 def run_daily_recalculation():
     print(" [Scheduler] Running daily job-user similarity update...")
@@ -49,5 +50,11 @@ def run_daily_recalculation():
 
 def start_scheduler():
     scheduler = BackgroundScheduler(timezone="Africa/Addis_Ababa")
+    logger = logging.getLogger("apscheduler")
+    logger.setLevel(logging.INFO)
+    logger.addHandler(logging.StreamHandler())
+    logger.info("Initial run to populate recommendations...")
+    # Initial run to populate recommendations
+    scheduler.add_job(run_daily_recalculation, id="initial_calculation")
     scheduler.add_job(run_daily_recalculation, trigger='cron', hour=22, minute=0, id="daily_job_user_update")
     scheduler.start()
