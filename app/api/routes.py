@@ -6,7 +6,7 @@ import traceback
 router = APIRouter()
 @router.get("/ping")
 def ping():
-    return {"status": "ok"}
+    return {"status": "ok working..."}
 @router.get("/recommendations/{user_id}")
 def recommendations(user_id: str, page: int = Query(1, gt=0), size: int = Query(20, gt=0)):
     try:
