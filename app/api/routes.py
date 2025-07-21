@@ -4,7 +4,9 @@ from app.services.recommender import get_user_recommendations, get_all_recommend
 import traceback
 
 router = APIRouter()
-
+@router.get("/ping")
+def ping():
+    return {"status": "ok"}
 @router.get("/recommendations/{user_id}")
 def recommendations(user_id: str, page: int = Query(1, gt=0), size: int = Query(20, gt=0)):
     try:
