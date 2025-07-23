@@ -2,6 +2,7 @@
 
 import requests
 from app.config import settings
+from typing import Any
 
 
 def fetch_user(user_id: str) -> dict | None:
@@ -9,13 +10,19 @@ def fetch_user(user_id: str) -> dict | None:
     r = requests.get(url)
     return r.json() if r.status_code == 200 else None
 
-def fetch_all_users(limit: int = 1000) -> list[dict]:
-    r = requests.get(settings.USERS_API, params={"limit": limit})
+
+def fetch_all_users(limit: int | None = None) -> list[dict]:
+    params: dict[str, Any] = {}
+    if limit is not None:
+        params["limit"] = limit
+    r = requests.get(settings.USERS_API, params=params)
     return r.json().get("users", []) if r.status_code == 200 else []
 
 
-def fetch_jobs_open(limit: int = 1000) -> list[dict]:
-    params = {"status": "open", "limit": limit}
+def fetch_jobs_open(limit: int | None = None) -> list[dict]:
+    params: dict[str, Any] = {"status": "open"}
+    if limit is not None:
+        params["limit"] = limit
     r = requests.get(settings.JOBS_API, params=params)
     return r.json().get("jobs", []) if r.status_code == 200 else []
 
