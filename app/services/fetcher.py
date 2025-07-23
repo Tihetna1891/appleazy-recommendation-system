@@ -16,7 +16,7 @@ def fetch_all_users(limit: int | None = 100000) -> list[dict]:
     if limit is not None:
         params["limit"] = limit
     r = requests.get(settings.USERS_API, params=params)
-    return r.json().get("users", []) if r.status_code == 200 else []
+    return r.json().get("profiles", []) if r.status_code == 200 else []
 
 
 def fetch_jobs_open(limit: int | None = 100000) -> list[dict]:

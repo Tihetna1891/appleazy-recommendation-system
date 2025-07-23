@@ -30,15 +30,15 @@ def run_daily_recalculation():
     if not users:
         print(" No users fetched from api.")
         users = get_all_users()
+    print(f" Found {len(users)} users to process.")
 
     for user in users:
-        user_id = user.get("id")
+        user_id = user.get("userId")
         if not user_id:
             continue
 
         user_vec = get_user_vector(user_id)
         if user_vec is None:
-            print(f" User vector missing for {user_id}, skipping.")
             continue
 
         ranked_pairs = rank_jobs_for_user(np.array(user_vec, dtype=np.float32), job_matrix)
