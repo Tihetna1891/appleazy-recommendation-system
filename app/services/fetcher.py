@@ -11,7 +11,7 @@ def fetch_user(user_id: str) -> dict | None:
     return r.json() if r.status_code == 200 else None
 
 
-def fetch_all_users(limit: int | None = None) -> list[dict]:
+def fetch_all_users(limit: int | None = 100000) -> list[dict]:
     params: dict[str, Any] = {}
     if limit is not None:
         params["limit"] = limit
@@ -19,7 +19,7 @@ def fetch_all_users(limit: int | None = None) -> list[dict]:
     return r.json().get("users", []) if r.status_code == 200 else []
 
 
-def fetch_jobs_open(limit: int | None = None) -> list[dict]:
+def fetch_jobs_open(limit: int | None = 100000) -> list[dict]:
     params: dict[str, Any] = {"status": "open"}
     if limit is not None:
         params["limit"] = limit
